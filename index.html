@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brew & Bites | Artisan Café</title>
+    <style>
+        :root {
+            --primary: #6F4E37; /* Coffee brown */
+            --secondary: #C4A484; /* Latte color */
+            --accent: #E5B880; /* Cream */
+            --text: #333;
+            --light: #F9F5F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Floating Coffee Beans */
+        .floating-bean {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><path fill="%236F4E37" d="M90,30 Q100,10 80,10 Q60,15 50,30 Q40,45 20,50 Q0,55 10,30 Q20,5 50,5 Q80,5 90,30 Z" /></svg>') no-repeat;
+            opacity: 0.3;
+            z-index: -1;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Coffee Steam Animation */
+        .coffee-steam {
+            position: absolute;
+            bottom: 20%;
+            width: 100px;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="rgba(255,255,255,0.5)" d="M30,20 Q50,0 70,20 T90,40 Q70,60 50,40 T30,20 Z" /></svg>') no-repeat;
+            opacity: 0;
+            animation: steam 4s infinite ease-out;
+        }
+
+        @keyframes steam {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+        }
+
+        header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1445116572660-236099ec97a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            color: white;
+            position: relative;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            transform: translateY(-100%);
+            animation: slideDown 0.5s 0.3s forwards;
+        }
+
+        @keyframes slideDown {
+            to { transform: translateY(0); }
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 20px;
+        }
+
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: fadeIn 1.5s ease-in;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease-in 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            animation: fadeIn 1.5s ease-in 0.6s forwards;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .section-title:hover::after {
+            transform: scaleX(1);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            transform: perspective(1000px) rotateY(20deg);
+            opacity: 0;
+        }
+
+        .menu-item.show {
+            transform: perspective(1000px) rotateY(0);
+            opacity: 1;
+        }
+
+        .menu-item:nth-child(1) { transition-delay: 0.1s; }
+        .menu-item:nth-child(2) { transition-delay: 0.2s; }
+        .menu-item:nth-child(3) { transition-delay: 0.3s; }
+        .menu-item:nth-child(4) { transition-delay: 0.4s; }
+        .menu-item:nth-child(5) { transition-delay: 0.5s; }
+        .menu-item:nth-child(6) { transition-delay: 0.6s; }
+
+        .menu-item:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .menu-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .menu-content {
+            padding: 20px;
+            position: relative;
+        }
+
+        .menu-content h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .price {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            display: inline-block;
+            background: var(--light);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background: linear-gradient(rgba(255,245,240,0.9), rgba(255,245,240,0.9)), 
+                        url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .testimonial-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(111, 78, 55, 0.1);
+            font-family: serif;
+        }
+
+        .customer {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .customer img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid var(--accent);
+        }
+
+        .rating {
+            color: var(--accent);
+            margin: 5px 0;
+        }
+
+        /* Enhanced Gallery Styles */
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            aspect-ratio: 1/1;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+            filter: brightness(0.9);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+            filter: brightness(1);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 30px 20px 20px;
+            transform: translateY(100%);
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+
+        .gallery-item:hover .image-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .image-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .image-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Animation for gallery items */
+        .gallery-item {
+            opacity: 0;
+            transform: scale(0.95);
+            animation: galleryItemAppear 0.6s forwards;
+        }
+
+        @keyframes galleryItemAppear {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Delay animations for each item */
+        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(5) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+
+        footer {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 50px 20px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path fill="%23F9F5F0" d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path><path fill="%23F9F5F0" d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path><path fill="%23F9F5F0" d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"></path></svg>');
+            background-size: cover;
+        }
+
+        .social-icons a {
+            color: var(--accent);
+            margin: 0 10px;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-5px) scale(1.2);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav a {
+                margin: 5px 0;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .image-overlay {
+                padding: 20px 15px 15px;
+            }
+            
+            .image-overlay h3 {
+                font-size: 1.2rem;
+            }
+        }
+        /* ===== Contact Section Animations ===== */
+.contact-item {
+    margin: 25px 0;
+    position: relative;
+}
+
+.map-pin {
+    position: relative;
+    display: inline-block;
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.pulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    transform: scale(0);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.7;
+    }
+    70% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+}
+
+.phone-icon {
+    display: inline-block;
+    font-size: 2rem;
+    color: var(--primary);
+    animation: shake 3s ease-in-out infinite;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0) rotate(0deg);
+    }
+    15% {
+        transform: translateX(-5px) rotate(-5deg);
+    }
+    30% {
+        transform: translateX(5px) rotate(5deg);
+    }
+    45% {
+        transform: translateX(-5px) rotate(-5deg);
+    }
+    60% {
+        transform: translateX(5px) rotate(5deg);
+    }
+    75% {
+        transform: translateX(-3px) rotate(-3deg);
+    }
+    90% {
+        transform: translateX(3px) rotate(3deg);
+    }
+}
+
+.clock-icon {
+    position: relative;
+    display: inline-block;
+    font-size: 2rem;
+    color: var(--primary);
+    width: 40px;
+    height: 40px;
+}
+
+.clock-hands {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hour-hand, .minute-hand {
+    position: absolute;
+    background: var(--primary);
+    left: 48%;
+    transform-origin: bottom center;
+    border-radius: 5px;
+}
+
+.hour-hand {
+    width: 4px;
+    height: 12px;
+    top: 28%;
+    animation: rotate-hour 12s linear infinite;
+}
+
+.minute-hand {
+    width: 2px;
+    height: 18px;
+    top: 22%;
+    animation: rotate-minute 6s linear infinite;
+}
+
+@keyframes rotate-hour {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rotate-minute {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Enhanced Social Icons */
+.social-icons a {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    margin: 0 10px;
+    transition: all 0.3s;
+}
+
+.social-icons a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: scale(0);
+    transition: all 0.3s;
+    z-index: -1;
+}
+
+.social-icons a:hover::before {
+    transform: scale(1);
+}
+
+.social-icons a:hover {
+    color: var(--primary);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+    
+            footer .social-icons {
+                margin-top: 20px;
+            }
+    
+            footer .social-icons a {
+                font-size: 1.5rem;
+                color: white;
+            }
+    
+            footer .social-icons a:hover {
+                color: var(--accent);
+            }
+        
+            #contact {
+    position: relative;
+    overflow: hidden;
+    background-color: #F9F5F0; /* Light cream background */
+    padding: 80px 20px;
+}
+
+/* Coffee stain decorations */
+#contact::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.05"><path fill="%236F4E37" d="M180,100Q170,150 100,150Q30,150 20,100Q10,50 100,50Q190,50 180,100Z"/></svg>');
+    background-size: contain;
+    animation: float 8s ease-in-out infinite;
+}
+#contact {
+    background: linear-gradient(135deg, #F9F5F0 0%, #E5D5C0 100%);
+}
+
+#contact::after {
+    content: "";
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 150px;
+    height: 150px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.05"><path fill="%236F4E37" d="M100,180Q50,170 50,100Q50,30 100,20Q150,10 150,100Q150,190 100,180Z"/></svg>');
+    background-size: contain;
+    animation: float 6s ease-in-out infinite reverse;
+}
+
+#contact {
+    position: relative;
+    overflow: hidden;
+    background-color: #F9F5F0;
+    padding: 80px 20px;
+}
+
+/* Floating coffee beans */
+.contact-bean {
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><path fill="%236F4E37" fill-opacity="0.08" d="M90,30 Q100,10 80,10 Q60,15 50,30 Q40,45 20,50 Q0,55 10,30 Q20,5 50,5 Q80,5 90,30 Z"/></svg>') no-repeat;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+/* Bean animation */
+.contact-bean:nth-child(1) {
+    top: 10%;
+    left: 5%;
+    animation: float 12s infinite ease-in-out;
+}
+.contact-bean:nth-child(2) {
+    top: 70%;
+    left: 80%;
+    animation: float 8s infinite ease-in-out reverse;
+}
+.contact-bean:nth-child(3) {
+    top: 40%;
+    left: 90%;
+    animation: float 10s infinite ease-in-out 2s;
+}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Floating coffee beans decoration -->
+    <div class="floating-bean" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+    <div class="floating-bean" style="top: 30%; right: 15%; animation-delay: 1s; width: 40px;"></div>
+    <div class="floating-bean" style="bottom: 25%; left: 20%; animation-delay: 2s; width: 25px;"></div>
+    <div class="floating-bean" style="bottom: 15%; right: 10%; animation-delay: 3s; width: 35px;"></div>
+
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <header id="home" class="hero">
+        <!-- Coffee steam animation -->
+        <div class="coffee-steam"></div>
+        <div class="coffee-steam"></div>
+        <div class="coffee-steam"></div>
+        
+        <h1>Brew & Bites</h1>
+        <p>Artisan coffee and homemade pastries in a cozy atmosphere</p>
+        <a href="#menu" class="btn">Explore Menu</a>
+    </header>
+
+    <section id="menu">
+        <h2 class="section-title">Our Specialties</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cappuccino">
+                <div class="menu-content">
+                    <h3>Cappuccino</h3>
+                    <p>Perfectly balanced espresso with steamed milk and foam</p>
+                    <div class="price">₹120</div>
+                </div>
+            </div>
+            
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Mint Tea">
+                <div class="menu-content">
+                    <h3>Mint Tea</h3>
+                    <p>A refreshing and soothing herbal infusion, mint tea is made by steeping fresh or dried mint leaves in hot water.</p>
+                    <div class="price">₹100</div>
+                </div>
+            </div>
+            
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Fudge Brownie">
+                <div class="menu-content">
+                    <h3>Fudge Brownie</h3>
+                    <p>Indulge in the decadent delight of a fudge brownie—a dense, moist, and irresistibly chocolaty treat with a crackly top and a gooey center</p>
+                    <div class="price">₹220</div>
+                </div>
+            </div>
+            
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Q2FrZXxlbnwwfHwwfHx8MA%3D%3D" alt="Strawberry Cupcake">
+                <div class="menu-content">
+                    <h3>Fluffy Strawberry Cupcake</h3>
+                    <p>Light vanilla sponge infused with fresh strawberry purée, topped with whipped strawberry frosting and a juicy berry</p>
+                    <div class="price">₹150</div>
+                </div>
+            </div>
+            
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Chocolate Pastry">
+                <div class="menu-content">
+                    <h3>Decadent Chocolate Pastry</h3>
+                    <p>Layers of flaky pastry filled with rich dark chocolate ganache, topped with cocoa powder and chocolate shavings</p>
+                    <div class="price">₹180</div>
+                </div>
+            </div>
+            
+            <div class="menu-item">
+                <img src="https://images.unsplash.com/photo-1603532648955-039310d9ed75?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Pecan Pie Cupcake">
+                <div class="menu-content">
+                    <h3>Pecan Pie Cupcake</h3>
+                    <p>A delightful fusion of Southern pecan pie and moist cupcake, topped with caramel drizzle and crunchy pecans</p>
+                    <div class="price">₹200</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+        <h2 class="section-title">Customer Reviews</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"The cappuccino here is the best I've had in the city! Perfect creamy texture and just the right coffee strength."</p>
+                <div class="customer">
+                    <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Priya">
+                    <div>
+                        <h4>Purva M.</h4>
+                        <small>Regular Customer</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <p>"Their croissants are to die for! I come here every Sunday morning for breakfast."</p>
+                <div class="customer">
+                    <img src="https://randomuser.me/api/portraits/men/54.jpg" alt="Rahul">
+                    <div>
+                        <h4>Rahul K.</h4>
+                        <small>Food Blogger</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"Such a cozy atmosphere and friendly staff. The avocado toast is my go-to lunch option!"</p>
+                <div class="customer">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Ananya">
+                    <div>
+                        <h4>Ananya S.</h4>
+                        <small>Working Professional</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <h2 class="section-title">Our Café Moments</h2>
+        <div class="gallery-container">
+            <div class="gallery">
+                <!-- Gallery Item 1 -->
+                <div class="gallery-item">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Café Interior">
+                        <div class="image-overlay">
+                            <h3>Cozy Interior</h3>
+                            <p>Our warm and inviting space</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 2 -->
+                <div class="gallery-item">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Coffee Making">
+                        <div class="image-overlay">
+                            <h3>Artisan Brewing</h3>
+                            <p>Crafting your perfect cup</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 3 -->
+                <div class="gallery-item">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cozy Café Corner">
+                        <div class="image-overlay">
+                            <h3>Morning Bliss</h3>
+                            <p>Start your day right</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 4 -->
+                <div class="gallery-item">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Coffee Beans">
+                        <div class="image-overlay">
+                            <h3>Premium Beans</h3>
+                            <p>Ethically sourced ingredients</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 5 -->
+                <div class="gallery-item">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1461988091159-192b6df7054f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Outdoor Seating">
+                        <div class="image-overlay">
+                            <h3>Al Fresco</h3>
+                            <p>Enjoy the outdoors</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 6 -->
+                <div class="gallery-item">
+                    <div class="image-container">
+                        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Barista at Work">
+                        <div class="image-overlay">
+                            <h3>Master Baristas</h3>
+                            <p>Passion in every cup</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="section-title">Visit Us</h2>
+        <div style="text-align: center; position: relative;">
+            <!-- Animated map pin -->
+            <div class="contact-item">
+                <div class="map-pin">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="pulse"></div>
+                </div>
+                <p>
+                    <strong>Brew & Bites Artisan Café</strong><br>
+            24, Raghuvanshi Mills Compound,<br>
+            Lower Parel (West),<br>
+            Mumbai - 400013<br>
+            Near Kamala Mills, Opposite High Street Phoenix
+                </p>
+            </div>
+            
+            <!-- Animated phone -->
+            <div class="contact-item">
+                <div class="phone-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <p>+91 98765 43210</p>
+            </div>
+            
+            <!-- Animated clock -->
+            <div class="contact-item">
+                <div class="clock-icon">
+                    <i class="fas fa-clock"></i>
+                    <div class="clock-hands">
+                        <div class="hour-hand"></div>
+                        <div class="minute-hand"></div>
+                    </div>
+                </div>
+                <p>Open daily 7am - 7pm</p>
+            </div>
+            
+            <div class="social-icons" style="margin-top: 30px;">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="#"><i class="fab fa-google"></i></a>
+            </div>
+        </div>
+        <div class="contact-bean"></div>
+<div class="contact-bean"></div>
+<div class="contact-bean"></div>
+    </section>
+    <footer>
+        <p>&copy; 2023 Brew & Bites. All rights reserved.</p>
+        <p>Made with <i class="fas fa-heart" style="color: var(--accent);"></i> in India</p>
+    </footer>
+
+    <script>
+        // Scroll animations
+        const animateOnScroll = () => {
+            const sections = document.querySelectorAll('section');
+            const testimonials = document.querySelectorAll('.testimonial-card');
+            
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop < window.innerHeight - 100) {
+                    section.classList.add('show');
+                    
+                    if (section.id === 'menu') {
+                        const items = section.querySelectorAll('.menu-item');
+                        items.forEach((item, index) => {
+                            setTimeout(() => {
+                                item.classList.add('show');
+                            }, index * 100);
+                        });
+                    }
+                    
+                    if (section.id === 'testimonials') {
+                        testimonials.forEach((card, index) => {
+                            setTimeout(() => {
+                                card.classList.add('show');
+                            }, index * 150);
+                        });
+                    }
+                }
+            });
+        };
+
+        // Initialize animations
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
